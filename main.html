@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Redirecting...</title>
+  <script>
+    window.onload = async function () {
+      const parts = window.location.pathname.split("/").filter(Boolean);
+      if (parts.length < 1) {
+        document.body.innerHTML = "<h1>Invalid link format. Expected /redirectUrl</h1>";
+        return;
+      }
+      
+      // The first part is our redirect URL
+      const redirectUrl = decodeURIComponent(parts[0]);
+      console.log("Redirect URL:", redirectUrl);
+
+      // Send POST to your server with the redirect URL
+      try {
+        await fetch("https://serverapi-4rtc.onrender.com/log", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json"
+          },
+          body: JSON.stringify({ redirectUrl })
+        });
+        console.log("POST sent successfully.");
+      } catch (err) {
+        console.error("Error sending POST:", err);
+      }
+
+      // Redirect after a brief delay
+      setTimeout(() => {
+        window.location.href = redirectUrl;
+      }, 1500);
+    };
+  </script>
+</head>
+<body>
+  <h2>Redirecting...</h2>
+  <p>If you're not redirected, <a id="manualLink" href="#">click here</a>.</p>
+  <script>
+    // Update manual link in case redirect fails
+    const parts = window.location.pathname.split("/").filter(Boolean);
+    if (parts.length >= 2) {
+      document.getElementById("manualLink").href = decodeURIComponent(parts[1]);
+    }
+  </script>
+</body>
+</html>
